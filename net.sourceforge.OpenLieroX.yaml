@@ -37,6 +37,7 @@ modules:
       - -DSYSTEM_DATA_DIR=/app/share
       - -DHAWKNL_BUILTIN=ON
       - -DLIBZIP_BUILTIN=ON
+      - -DCMAKE_POLICY_VERSION_MINIMUM=3.5
     post-install:
       - install -Dm755 bin/openlierox ${FLATPAK_DEST}/bin/openlierox
       - install -d ${FLATPAK_DEST}/share/OpenLieroX/

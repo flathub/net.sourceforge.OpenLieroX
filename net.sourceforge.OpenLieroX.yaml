@@ -6,18 +6,72 @@ command: openlierox
 rename-icon: OpenLieroX
 rename-desktop-file: openlierox.desktop
 finish-args:
+  # --device=input (below) requires a recent Flatpak on the host;
+  # Flathub's linter mandates at least 1.16.0.
+  - --require-version=1.16.0
   - --socket=pulseaudio
   - --socket=fallback-x11
   - --socket=wayland
   - --share=ipc
   - --share=network
   - --device=dri
+  # Gamepad/joystick access (/dev/input event devices for SDL2).
+  - --device=input
 
 modules:
   - shared-modules/glu/glu-9.json
-  - shared-modules/SDL/sdl12-compat.json
-  - shared-modules/SDL/SDL_image-1.2.12.json
-  - shared-modules/SDL/SDL_mixer-1.2.12.json
+
+  # OpenLieroX master needs Boost headers (header-only usage:
+  # FIND_PACKAGE(Boost REQUIRED) with no components).
+  - name: boost
+    buildsystem: simple
+    build-commands:
+      - cp -r boost /app/include/
+    cleanup:
+      - '*'
+    sources:
+      - type: archive
+        url: https://archives.boost.io/release/1.86.0/source/boost_1_86_0.tar.bz2
+        sha256: 1bed88e40401b2cb7a1f76d4bab499e352fa4d0c5f31c0dbae64e24d34d7513b
+
+  - name: yaml-cpp
+    buildsystem: cmake-ninja
+    build-options:
+      # yaml-cpp 0.8.0 misses <cstdint> includes; GCC 15 (runtime 25.08)
+      # needs it force-included.
+      cxxflags: -include cstdint
+    config-opts:
+      - -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+      - -DCMAKE_INSTALL_LIBDIR=lib
+      - -DYAML_CPP_BUILD_TESTS=OFF
+      - -DYAML_BUILD_SHARED_LIBS=ON
+    sources:
+      - type: archive
+        url: https://github.com/jbeder/yaml-cpp/archive/refs/tags/0.8.0.tar.gz
+        sha256: fbe74bbdcee21d656715688706da3c8becfd946d92cd44705cc6098bb23b3a16
+
+  - name: SDL2_image
+    buildsystem: cmake-ninja
+    builddir: true
+    config-opts:
+      - -DCMAKE_INSTALL_LIBDIR=lib
+      - -DSDL2IMAGE_VENDORED=OFF
+      - -DSDL2IMAGE_SAMPLES=OFF
+      - -DSDL2IMAGE_TESTS=OFF
+    sources:
+      - type: archive
+        url: https://github.com/libsdl-org/SDL_image/releases/download/release-2.8.2/SDL2_image-2.8.2.tar.gz
+        sha256: 8f486bbfbcf8464dd58c9e5d93394ab0255ce68b51c5a966a918244820a76ddc
+
+  - name: freealut
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+      - -DBUILD_STATIC=OFF
+    sources:
+      - type: archive
+        url: https://github.com/vancegroup/freealut/archive/refs/tags/freealut_1_1_0.tar.gz
+        sha256: c3880d7dbb90c7db54e1d6b88aa0a34dd9e2d828fd389be0d2cbb2632b0885dd
 
   - name: libgd
     buildsystem: autotools
@@ -31,9 +85,16 @@ modules:
   - name: openlierox
     buildsystem: cmake-ninja
     no-make-install: true
+    build-options:
+      # SDL2_image installs its header under /app/include/SDL2, but OLX
+      # includes it bare (<SDL_image.h>); sdl2-config only points at the
+      # runtime's /usr/include/SDL2, so add the app one explicitly.
+      cflags: -I/app/include/SDL2
+      cxxflags: -I/app/include/SDL2
     config-opts:
       - -DDEBUG=OFF
       - -DBREAKPAD=OFF
+      - -DHASBFD=OFF
       - -DSYSTEM_DATA_DIR=/app/share
       - -DHAWKNL_BUILTIN=ON
       - -DLIBZIP_BUILTIN=ON
@@ -43,16 +104,13 @@ modules:
       - install -d ${FLATPAK_DEST}/share/OpenLieroX/
       - cp -r share/gamedir/* ${FLATPAK_DEST}/share/OpenLieroX/
       - install -Dm644 share/OpenLieroX.svg ${FLATPAK_DEST}/share/icons/hicolor/scalable/apps/OpenLieroX.svg
-      - install -Dm644 share/openlierox-openlierox.desktop ${FLATPAK_DEST}/share/applications/openlierox.desktop
+      - install -Dm644 share/net.openlierox.OpenLieroX.desktop ${FLATPAK_DEST}/share/applications/openlierox.desktop
       - install -Dm644 net.sourceforge.OpenLieroX.appdata.xml ${FLATPAK_DEST}/share/appdata/net.sourceforge.OpenLieroX.appdata.xml
     sources:
-      - type: archive
-        url: http://downloads.sourceforge.net/openlierox/OpenLieroX_0.58_rc5.src.tar.bz2
-        sha256: 3e029aba20f22d902027293e1f1a196e2f1794455cb2483d099709d7fb6c5fbb
-      - type: patch
-        paths:
-          - patches/fix-cmake-4.patch
-          - patches/fix-libxml2-build.patch
-          - patches/fix-missing-include.patch
+      - type: git
+        url: https://github.com/openlierox/openlierox.git
+        tag: '20260704.3'
+        commit: 08994037de362961f4225744270bbfd7a179d1d8
+        disable-submodules: true
       - type: file
         path: net.sourceforge.OpenLieroX.appdata.xml

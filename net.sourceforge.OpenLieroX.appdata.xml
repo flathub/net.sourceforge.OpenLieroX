@@ -35,6 +35,16 @@
     <content_attribute id="social-chat">intense</content_attribute>
   </content_rating>
   <releases>
+    <release version="20260704.3" date="2026-07-04">
+      <description>
+        <p>OpenLieroX now uses SDL2 and gains several features:</p>
+        <ul>
+          <li>Up to 4-player local split-screen play</li>
+          <li>Improved gamepad support with twin-stick controls</li>
+          <li>Widescreen support</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.59 beta10" date="2012-04-17"/>
     <release version="0.59 beta9" date="2010-04-28"/>
     <release version="0.59 beta8" date="2010-03-17"/>

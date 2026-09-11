@@ -1,10 +1,10 @@
 app-id: net.sourceforge.OpenLieroX
 runtime: org.freedesktop.Platform
-runtime-version: '25.08'
+runtime-version: '26.08'
 sdk: org.freedesktop.Sdk
 command: openlierox
 rename-icon: OpenLieroX
-rename-desktop-file: openlierox.desktop
+rename-desktop-file: openlierox-openlierox.desktop
 finish-args:
   - --socket=pulseaudio
   - --socket=fallback-x11
@@ -14,7 +14,6 @@ finish-args:
   - --device=dri
 
 modules:
-  - shared-modules/glu/glu-9.json
   - shared-modules/SDL/sdl12-compat.json
   - shared-modules/SDL/SDL_image-1.2.12.json
   - shared-modules/SDL/SDL_mixer-1.2.12.json
@@ -39,12 +38,12 @@ modules:
       - -DLIBZIP_BUILTIN=ON
       - -DCMAKE_POLICY_VERSION_MINIMUM=3.5
     post-install:
-      - install -Dm755 bin/openlierox ${FLATPAK_DEST}/bin/openlierox
+      - install -Dm755 bin/openlierox -t ${FLATPAK_DEST}/bin/
       - install -d ${FLATPAK_DEST}/share/OpenLieroX/
       - cp -r share/gamedir/* ${FLATPAK_DEST}/share/OpenLieroX/
-      - install -Dm644 share/OpenLieroX.svg ${FLATPAK_DEST}/share/icons/hicolor/scalable/apps/OpenLieroX.svg
-      - install -Dm644 share/openlierox-openlierox.desktop ${FLATPAK_DEST}/share/applications/openlierox.desktop
-      - install -Dm644 net.sourceforge.OpenLieroX.appdata.xml ${FLATPAK_DEST}/share/appdata/net.sourceforge.OpenLieroX.appdata.xml
+      - install -Dm644 share/OpenLieroX.svg -t ${FLATPAK_DEST}/share/icons/hicolor/scalable/apps/
+      - install -Dm644 share/openlierox-openlierox.desktop -t ${FLATPAK_DEST}/share/applications/
+      - install -Dm644 net.sourceforge.OpenLieroX.appdata.xml -t ${FLATPAK_DEST}/share/metainfo/
     sources:
       - type: archive
         url: http://downloads.sourceforge.net/openlierox/OpenLieroX_0.58_rc5.src.tar.bz2

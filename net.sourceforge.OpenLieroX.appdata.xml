@@ -15,7 +15,7 @@
   <url type="homepage">https://www.openlierox.net</url>
   <url type="faq">https://www.openlierox.net/faq/</url>
   <url type="help">https://www.openlierox.net/help/</url>
-  <url type="vcs-browser">https://sourceforge.net/p/openlierox/code/ci/master/tree/</url>
+  <url type="vcs-browser">https://github.com/openlierox/openlierox</url>
   <launchable type="desktop-id">net.sourceforge.OpenLieroX.desktop</launchable>
   <developer_name>Jason Boettcher</developer_name>
   <screenshots>

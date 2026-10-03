@@ -37,9 +37,10 @@
   <releases>
     <release version="20260717.2" date="2026-07-17">
       <description>
-        <p>OpenLieroX now uses SDL2 and gains several features:</p>
+        <p>New features in release</p>
         <ul>
-          <li>Up to 4-player local split-screen play</li>
+          <li>Upgrade to SDL2<li>
+          <li>Up to 4-player local split-screen</li>
           <li>Improved gamepad support with twin-stick controls</li>
           <li>Widescreen support</li>
         </ul>

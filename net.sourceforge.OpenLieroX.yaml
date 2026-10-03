@@ -6,17 +6,15 @@ command: openlierox
 rename-icon: OpenLieroX
 rename-desktop-file: openlierox-openlierox.desktop
 finish-args:
-  # --device=input (below) requires a recent Flatpak on the host;
-  # Flathub's linter mandates at least 1.16.0.
-  - --require-version=1.16.0
   - --socket=pulseaudio
   - --socket=fallback-x11
   - --socket=wayland
   - --share=ipc
   - --share=network
   - --device=dri
-  # Gamepad/joystick access (/dev/input event devices for SDL2).
-  - --device=input
+  # Gamepad/joystick access for SDL2. --device=input would be narrower but
+  # needs Flatpak 1.15.6+, which excludes e.g. the Steam Deck and Ubuntu 24.04.
+  - --device=all
 
 modules:
   - shared-modules/glu/glu-9.json

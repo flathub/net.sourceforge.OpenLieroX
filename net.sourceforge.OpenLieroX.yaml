@@ -11,7 +11,6 @@ finish-args:
   - --socket=wayland
   - --share=ipc
   - --share=network
-  - --device=dri
   # Gamepad/joystick access for SDL2. --device=input would be narrower but
   # needs Flatpak 1.15.6+, which excludes e.g. the Steam Deck and Ubuntu 24.04.
   - --device=all
